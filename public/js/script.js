@@ -19,7 +19,6 @@ canvasResize();
 function particle_01() {
   var stage = new createjs.Stage("ics-tutorial__canvas");
 
-  var size = 50;
   var balls = [];
   var count = 0;
   var max_life = 100;
@@ -35,11 +34,11 @@ function particle_01() {
   function emitParticles() {
     for (var i = 0; i < 1; i++) {
       var ball = new createjs.Shape();
+      var size = 50 * Math.random();
       count += 1;
-      ball.graphics.beginFill(createjs.Graphics.getHSL(count, 50, 75)).drawCircle(0, 0, size * Math.random());
-
+      ball.graphics.beginFill(createjs.Graphics.getHSL(count, 50, 75)).drawCircle(0, 0, size);
       stage.addChild(ball);
-      ball.x = stage.canvas.width * Math.random();
+      ball.x = stage.mouseX;
       ball.y = stage.mouseY;
 
       //拡散
@@ -48,6 +47,7 @@ function particle_01() {
 
       //寿命
       ball.life = max_life;
+      ball.size = size;
       balls.push(ball);
     }
   }
@@ -56,20 +56,13 @@ function particle_01() {
     for (var i = 0; i < balls.length; i++) {
       var ball = balls[i];
 
-      var point = ball.localToLocal(0, 0, ball);
-      var isHit = ball.hitTest(point.x, point.y);
-
-      if (isHit == true) {
-        ball.compositeOperation = "xor";
-      } else {
-        ball.graphics.clear().beginFill(createjs.Graphics.getHSL(count, 75, 10)).drawCircle(0, 0, size * Math.random() * 10);
-      }
-
       var scale = ball.life / max_life;
-      ball.scaleX = ball.scaleY = scale;
+      var test = ball.size * scale;
+      ball.graphics.clear().beginFill(createjs.Graphics.getHSL(count, 50, 75)).drawCircle(0, 0, test);
 
+      //console.log(ball.size);
       ball.life -= 1;
-      ball.vy += 0.6;
+      ball.vy += 0.1;
 
       ball.vx *= 0.98;
       ball.vy *= 0.98;
@@ -80,28 +73,29 @@ function particle_01() {
       if (ball.life <= 0) {
         stage.removeChild(ball);
         balls.splice(i, 1);
+        i--;
       }
 
-      if (ball.y > stage.canvas.height - size) {
-        ball.y = stage.canvas.height - size;
+      if (ball.y > stage.canvas.height - test) {
+        //下
+        ball.y = stage.canvas.height - test;
         ball.vy *= -1;
-        ball.vx *= 1;
       }
-      if (ball.y < 0) {
-        ball.y = size;
+      if (ball.y < test) {
+        //上
+        ball.y = test;
         ball.vy *= -1;
-        ball.vx *= 1;
       }
 
-      if (ball.x > stage.canvas.width - size) {
-        ball.x = stage.canvas.width - size;
-        ball.vy *= 1;
+      if (ball.x > stage.canvas.width - test) {
+        //右
+        ball.x = stage.canvas.width - test;
         ball.vx *= -1;
       }
 
-      if (ball.x < 0) {
-        ball.x = size;
-        ball.vy *= 1;
+      if (ball.x < test) {
+        //左
+        ball.x = test;
         ball.vx *= -1;
       }
     }
