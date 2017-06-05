@@ -1,5 +1,6 @@
 import "./lib/ics-basics.js"
 import "./lib/particle.js"
+import "./lib/firework01.js"
 
 window.addEventListener("resize", canvasResize);
 function canvasResize() {
