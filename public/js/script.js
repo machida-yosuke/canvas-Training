@@ -4,58 +4,53 @@
 window.addEventListener("load", firework01);
 
 function firework01() {
-  var CR = createjs;
-  var stage = new CR.Stage("ics-tutorial__canvas");
+  var cjs = createjs;
+  var stage = new cjs.Stage("ics-tutorial__canvas");
 
-  CR.Ticker.addEventListener("tick", stage);
-  CR.Ticker.timingMode = CR.Ticker.RFA;
+  var fire_container = new cjs.Container();
+
+  fire_container.x = 0;
+  fire_container.y = 0;
+
+  stage.addChild(fire_container);
+
+  cjs.Ticker.addEventListener("tick", stage);
+
+  cjs.Ticker.timingMode = cjs.Ticker.RAF;
   window.addEventListener("click", handleClick);
-  CR.Ticker.addEventListener("tick", updateParticles);
-
+  cjs.Ticker.addEventListener("tick", updateParticles);
   function handleClick() {
-    emitparticles();
-    updateParticles();
+    emitParticles();
   }
 
-  var fire = [];
+  var fireballs = [];
   var steps = 300;
-  var diffusion = 110;
-  var life = 60;
-  var max_life = 300;
+  var diffusion = 3;
+  var life = 100;
 
-  function emitparticles() {
-    var fire_container = new CR.Container();
-    fire_container.x = stage.mouseX;
-    fire_container.y = stage.mouseY;
-
+  function emitParticles() {
     for (var i = 0; i < steps; i++) {
-      var size = 4 * Math.random();
-
-      var fireball = new CR.Shape();
+      var size = 10 * Math.random();
+      var fireball = new cjs.Shape();
       fireball.graphics.beginFill("#fff").drawCircle(0, 0, size);
-
-      var angle = i * (360 / steps) - 90;
+      var angle = i * (360 / steps);
       var radian = angle * Math.PI / 180;
-      fireball.vx = diffusion * Math.sin(radian) * (Math.random() - 0.5);
-      fireball.vy = diffusion * Math.cos(radian) * (Math.random() - 0.5);
-
-      fire[i] = fireball;
-      fire_container.addChild(fireball);
-      stage.addChild(fire_container);
+      fireball.x = stage.mouseX;
+      fireball.y = stage.mouseY;
+      fireball.vx = diffusion * Math.sin(radian) * Math.random();
+      fireball.vy = diffusion * Math.cos(radian) * Math.random();
 
       fireball.life = life;
-      fire.push(fireball);
+      fireballs.push(fireball);
+
+      fire_container.addChild(fireball);
     }
   }
 
   function updateParticles() {
-    for (var i = 0; i < fire.length; i++) {
-      var fireball = fire[i];
+    for (var i = 0; i < fireballs.length; i++) {
 
-      //fireball.vy += 1;
-
-      fireball.vx *= 0.7;
-      fireball.vy *= 0.7;
+      var fireball = fireballs[i];
 
       fireball.x += fireball.vx;
       fireball.y += fireball.vy;
@@ -66,8 +61,8 @@ function firework01() {
       fireball.life -= 1;
 
       if (fireball.life <= 0) {
-        stage.removeChild(fireball);
-        fire.splice(i, 1);
+        fire_container.removeChild(fireball);
+        fireballs.splice(i, 1);
         i--;
       }
     }
@@ -442,7 +437,7 @@ function time_watch_analog() {
 },{}],3:[function(require,module,exports){
 "use strict";
 
-window.addEventListener("load", particle_01);
+//window.addEventListener("load", particle_01);
 
 function particle_01() {
   var stage = new createjs.Stage("ics-tutorial__canvas");

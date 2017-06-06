@@ -1,4 +1,4 @@
-window.addEventListener("load", particle_01);
+//window.addEventListener("load", particle_01);
 
 function particle_01() {
   const stage = new createjs.Stage("ics-tutorial__canvas");
