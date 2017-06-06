@@ -1,75 +1,173 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// window.addEventListener("load", firework01);
+//
+// function firework01() {
+//   const cjs = createjs;
+//   const stage = new cjs.Stage("ics-tutorial__canvas");
+//
+//   const fire_container = new cjs.Container();
+//
+//   fire_container.x = 0;
+//   fire_container.y = 0;
+//
+//   stage.addChild(fire_container);
+//
+//   cjs.Ticker.addEventListener("tick", stage);
+//
+//   cjs.Ticker.timingMode = cjs.Ticker.RAF;
+//   window.addEventListener("click", handleClick);
+//   cjs.Ticker.addEventListener("tick", updateParticles);
+//   function handleClick() {
+//     emitParticles();
+//   }
+//
+//   const fireballs = [];
+//   const steps = 300;
+//   const diffusion = 3;
+//   const life = 100;
+//
+//   function emitParticles() {
+//     for (let i = 0; i < steps; i++) {
+//       const size = 10 * Math.random();
+//       const fireball = new cjs.Shape();
+//       fireball.graphics
+//         .beginFill("#fff")
+//         .drawCircle(0, 0, size);
+//       const angle = i * (360 / steps);
+//       const radian = angle * Math.PI / 180;
+//       fireball.x = stage.mouseX;
+//       fireball.y = stage.mouseY;
+//       fireball.vx = diffusion * Math.sin(radian) * Math.random();
+//       fireball.vy = diffusion * Math.cos(radian) * Math.random();
+//
+//       fireball.life = life;
+//       fireballs.push(fireball);
+//
+//       fire_container.addChild(fireball);
+//     }
+//   }
+//
+//   function updateParticles() {
+//     for (var i = 0; i < fireballs.length; i++) {
+//
+//       const fireball = fireballs[i];
+//
+//       fireball.vx *= 0.98;
+//       fireball.vy *= 0.98;
+//
+//       fireball.x += fireball.vx;
+//       fireball.y += fireball.vy;
+//
+//       const scale = fireball.life / life;
+//       fireball.scaleX = fireball.scaleY = scale;
+//       fireball.alpha = scale;
+//       fireball.life -= 1;
+//
+//       if (fireball.life <= 0) {
+//         fire_container.removeChild(fireball);
+//         fireballs.splice(i, 1);
+//         i--;
+//       }
+//     }
+//   }
+// }
 "use strict";
 
-window.addEventListener("load", firework01);
+},{}],2:[function(require,module,exports){
+"use strict";
 
-function firework01() {
-  var cjs = createjs;
-  var stage = new cjs.Stage("ics-tutorial__canvas");
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-  var fire_container = new cjs.Container();
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-  fire_container.x = 0;
-  fire_container.y = 0;
+var cjs = createjs;
 
-  stage.addChild(fire_container);
+var Fireball = function () {
+  function Fireball(canvas_id) {
+    _classCallCheck(this, Fireball);
 
-  cjs.Ticker.addEventListener("tick", stage);
-
-  cjs.Ticker.timingMode = cjs.Ticker.RAF;
-  window.addEventListener("click", handleClick);
-  cjs.Ticker.addEventListener("tick", updateParticles);
-  function handleClick() {
-    emitParticles();
+    this.stage = new cjs.Stage(canvas_id);
+    this.fireballs = [];
+    this.steps = 300;
+    this.diffusion = 3;
+    this.life = 100;
+    this.fire_container = new cjs.Container();
+    this.fire_container.x = 0;
+    this.fire_container.y = 0;
+    this.stage.addChild(this.fire_container);
+    this.initHandler();
   }
 
-  var fireballs = [];
-  var steps = 300;
-  var diffusion = 3;
-  var life = 100;
+  _createClass(Fireball, [{
+    key: "emitParticles",
+    value: function emitParticles() {
+      for (var i = 0; i < this.steps; i++) {
+        var size = 10 * Math.random();
+        var fireball = new cjs.Shape();
+        fireball.graphics.beginFill("#fff").drawCircle(0, 0, size);
+        var angle = i * (360 / this.steps);
+        var radian = angle * Math.PI / 180;
+        fireball.x = this.stage.mouseX;
+        fireball.y = this.stage.mouseY;
+        fireball.vx = this.diffusion * Math.sin(radian) * Math.random();
+        fireball.vy = this.diffusion * Math.cos(radian) * Math.random();
 
-  function emitParticles() {
-    for (var i = 0; i < steps; i++) {
-      var size = 10 * Math.random();
-      var fireball = new cjs.Shape();
-      fireball.graphics.beginFill("#fff").drawCircle(0, 0, size);
-      var angle = i * (360 / steps);
-      var radian = angle * Math.PI / 180;
-      fireball.x = stage.mouseX;
-      fireball.y = stage.mouseY;
-      fireball.vx = diffusion * Math.sin(radian) * Math.random();
-      fireball.vy = diffusion * Math.cos(radian) * Math.random();
+        fireball.life = this.life;
+        this.fireballs.push(fireball);
 
-      fireball.life = life;
-      fireballs.push(fireball);
-
-      fire_container.addChild(fireball);
-    }
-  }
-
-  function updateParticles() {
-    for (var i = 0; i < fireballs.length; i++) {
-
-      var fireball = fireballs[i];
-
-      fireball.x += fireball.vx;
-      fireball.y += fireball.vy;
-
-      var scale = fireball.life / life;
-      fireball.scaleX = fireball.scaleY = scale;
-      fireball.alpha = scale;
-      fireball.life -= 1;
-
-      if (fireball.life <= 0) {
-        fire_container.removeChild(fireball);
-        fireballs.splice(i, 1);
-        i--;
+        this.fire_container.addChild(fireball);
       }
     }
-  }
-}
+  }, {
+    key: "updateParticles",
+    value: function updateParticles() {
+      for (var i = 0; i < this.fireballs.length; i++) {
 
-},{}],2:[function(require,module,exports){
+        var fireball = this.fireballs[i];
+
+        fireball.vx *= 0.98;
+        fireball.vy *= 0.98;
+
+        fireball.x += fireball.vx;
+        fireball.y += fireball.vy;
+
+        var scale = fireball.life / this.life;
+        fireball.scaleX = fireball.scaleY = scale;
+        fireball.alpha = scale;
+        fireball.life -= 1;
+
+        if (fireball.life <= 0) {
+          this.fire_container.removeChild(fireball);
+          this.fireballs.splice(i, 1);
+          i--;
+        }
+      }
+    }
+  }, {
+    key: "initHandler",
+    value: function initHandler() {
+      var _this = this;
+
+      cjs.Ticker.addEventListener("tick", this.stage);
+      cjs.Ticker.timingMode = cjs.Ticker.RAF;
+      var handleClick = function handleClick() {
+        _this.emitParticles();
+      };
+      window.addEventListener("click", handleClick);
+      cjs.Ticker.addEventListener("tick", function () {
+        _this.updateParticles();
+      });
+    }
+  }]);
+
+  return Fireball;
+}();
+
+window.onload = function () {
+  var fire = new Fireball("ics-tutorial__canvas");
+};
+
+},{}],3:[function(require,module,exports){
 "use strict";
 
 //window.addEventListener("load", basics);
@@ -434,7 +532,7 @@ function time_watch_analog() {
   }
 }
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 
 //window.addEventListener("load", particle_01);
@@ -525,7 +623,7 @@ function particle_01() {
   }
 }
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 require("./lib/ics-basics.js");
@@ -533,6 +631,8 @@ require("./lib/ics-basics.js");
 require("./lib/particle.js");
 
 require("./lib/firework01.js");
+
+require("./lib/firework01_class.js");
 
 window.addEventListener("resize", canvasResize);
 function canvasResize() {
@@ -542,4 +642,4 @@ function canvasResize() {
 }
 canvasResize();
 
-},{"./lib/firework01.js":1,"./lib/ics-basics.js":2,"./lib/particle.js":3}]},{},[4]);
+},{"./lib/firework01.js":1,"./lib/firework01_class.js":2,"./lib/ics-basics.js":3,"./lib/particle.js":4}]},{},[5]);
