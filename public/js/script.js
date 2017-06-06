@@ -82,47 +82,75 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var cjs = createjs;
 
-var Fireball = function () {
-  function Fireball(canvas_id) {
-    _classCallCheck(this, Fireball);
+var App_Fireball = function () {
+  function App_Fireball(canvas_id) {
+    _classCallCheck(this, App_Fireball);
 
     this.stage = new cjs.Stage(canvas_id);
     this.fireballs = [];
-    this.steps = 300;
-    this.diffusion = 3;
-    this.life = 100;
     this.fire_container = new cjs.Container();
     this.fire_container.x = 0;
     this.fire_container.y = 0;
     this.stage.addChild(this.fire_container);
     this.initHandler();
+    this.colors = ["#9e60e5", "#7f6aff", "#ff4280", "#36f9bf", "#92b8e7"];
   }
 
-  _createClass(Fireball, [{
-    key: "emitParticles",
-    value: function emitParticles() {
-      for (var i = 0; i < this.steps; i++) {
-        var size = 10 * Math.random();
-        var fireball = new cjs.Shape();
-        fireball.graphics.beginFill("#fff").drawCircle(0, 0, size);
-        var angle = i * (360 / this.steps);
-        var radian = angle * Math.PI / 180;
-        fireball.x = this.stage.mouseX;
-        fireball.y = this.stage.mouseY;
-        fireball.vx = this.diffusion * Math.sin(radian) * Math.random();
-        fireball.vy = this.diffusion * Math.cos(radian) * Math.random();
+  _createClass(App_Fireball, [{
+    key: "initHandler",
+    value: function initHandler() {
+      var _this = this;
 
-        fireball.life = this.life;
-        this.fireballs.push(fireball);
-
-        this.fire_container.addChild(fireball);
-      }
+      cjs.Ticker.addEventListener("tick", this.stage);
+      cjs.Ticker.timingMode = cjs.Ticker.RAF;
+      var handleClick = function handleClick() {
+        var color = _this.colors[Math.floor(Math.random() * (_this.colors.length - 1))];
+        new Hanabi(_this.fire_container, _this.stage.mouseX, _this.stage.mouseY, color);
+      };
+      window.addEventListener("click", handleClick);
     }
-  }, {
+  }]);
+
+  return App_Fireball;
+}();
+
+var Hanabi = function () {
+  function Hanabi(stage, x, y, color) {
+    _classCallCheck(this, Hanabi);
+
+    this.stage = stage;
+    this.fireballs = [];
+    this.steps = 300;
+    this.diffusion = 3;
+    this.life = 100;
+    this.color = color;
+    this.size = 5 * Math.random();
+    for (var i = 0; i < this.steps; i++) {
+      var fireball = new cjs.Shape();
+      fireball.x = x;
+      fireball.y = y;
+
+      fireball.graphics.beginFill(this.color).drawCircle(0, 0, this.size);
+      fireball.compositeOperation = "screen";
+
+      this.angle = i * (360 / this.steps);
+      this.radian = this.angle * Math.PI / 180;
+
+      fireball.vx = this.diffusion * Math.sin(this.radian) * Math.random();
+      fireball.vy = this.diffusion * Math.cos(this.radian) * Math.random();
+
+      fireball.life = this.life;
+      this.fireballs.push(fireball);
+      this.stage.addChild(fireball);
+    }
+
+    this.initHandler();
+  }
+
+  _createClass(Hanabi, [{
     key: "updateParticles",
     value: function updateParticles() {
       for (var i = 0; i < this.fireballs.length; i++) {
-
         var fireball = this.fireballs[i];
 
         fireball.vx *= 0.98;
@@ -137,7 +165,7 @@ var Fireball = function () {
         fireball.life -= 1;
 
         if (fireball.life <= 0) {
-          this.fire_container.removeChild(fireball);
+          this.stage.removeChild(fireball);
           this.fireballs.splice(i, 1);
           i--;
         }
@@ -146,25 +174,19 @@ var Fireball = function () {
   }, {
     key: "initHandler",
     value: function initHandler() {
-      var _this = this;
+      var _this2 = this;
 
-      cjs.Ticker.addEventListener("tick", this.stage);
-      cjs.Ticker.timingMode = cjs.Ticker.RAF;
-      var handleClick = function handleClick() {
-        _this.emitParticles();
-      };
-      window.addEventListener("click", handleClick);
       cjs.Ticker.addEventListener("tick", function () {
-        _this.updateParticles();
+        _this2.updateParticles();
       });
     }
   }]);
 
-  return Fireball;
+  return Hanabi;
 }();
 
 window.onload = function () {
-  var fire = new Fireball("ics-tutorial__canvas");
+  var Fire = new App_Fireball("ics-tutorial__canvas");
 };
 
 },{}],3:[function(require,module,exports){
