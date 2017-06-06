@@ -1,10 +1,12 @@
-import Sample from './lib/Sample';
-import $ from 'jquery';
+import "./lib/ics-basics.js"
+import "./lib/particle.js"
+import "./lib/firework01.js"
+import "./lib/firework01_class.js"
 
-const sample = new Sample({
-    name: 'world'
-});
-
-$('.wrapper').on('click', () => {
-    console.log(`hello, ${sample.name}.`);
-});
+window.addEventListener("resize", canvasResize);
+function canvasResize() {
+  const ics_tutorial = document.getElementById("ics-tutorial__canvas");
+  ics_tutorial.setAttribute("width", window.innerWidth);
+  ics_tutorial.setAttribute("height", window.innerHeight);
+}
+canvasResize();
