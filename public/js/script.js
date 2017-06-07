@@ -125,9 +125,11 @@ var App_Fireball = function () {
   return App_Fireball;
 }();
 
+
 var Hanabi_Onecolor = function () {
   function Hanabi_Onecolor(Container, x, y, color) {
     _classCallCheck(this, Hanabi_Onecolor);
+
 
     this.container = Container;
     this.fireballs = [];
@@ -135,7 +137,9 @@ var Hanabi_Onecolor = function () {
     this.diffusion = 3;
     this.life = 80;
     this.color = color;
+
     this.size = 10 * Math.random();
+
 
     for (var i = 0; i < this.steps; i++) {
       var fireball = new cjs.Shape();
@@ -144,6 +148,7 @@ var Hanabi_Onecolor = function () {
 
       fireball.graphics.beginFill(this.color).drawCircle(0, 0, this.size);
       fireball.compositeOperation = "lighter";
+
 
       this.angle = i * (360 / this.steps);
       this.radian = this.angle * Math.PI / 180;
