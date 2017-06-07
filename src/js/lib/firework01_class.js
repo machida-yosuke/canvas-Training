@@ -13,7 +13,6 @@ class AppFireball {
     this.background = new cjs.Shape();
     this.background.graphics
       .beginFill("#000")
-
       .drawRect(0, 0, this.stage.canvas.width, this.stage.canvas.width);
 
     this.background.alpha = 0.08;

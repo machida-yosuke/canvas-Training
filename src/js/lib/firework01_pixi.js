@@ -11,7 +11,6 @@ class AppFireball {
       resolution:2,
       antialias:true
     });
-
     this.fire_container = new PIXI.Container();
 
     this.background = new PIXI.Graphics();
