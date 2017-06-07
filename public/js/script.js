@@ -87,13 +87,19 @@ var App_Fireball = function () {
     _classCallCheck(this, App_Fireball);
 
     this.stage = new cjs.Stage(canvas_id);
+    this.stage.autoClear = false;
     this.fireballs = [];
     this.fire_container = new cjs.Container();
     this.fire_container.x = 0;
     this.fire_container.y = 0;
-    this.stage.addChild(this.fire_container);
+
+    this.background = new cjs.Shape();
+    this.background.graphics.beginFill("#000").drawRect(0, 0, this.stage.canvas.width, this.stage.canvas.width);
+    this.background.alpha = 0.08;
+
+    this.stage.addChild(this.fire_container, this.background);
     this.initHandler();
-    this.colors = ["#9e60e5", "#7f6aff", "#ff4280", "#36f9bf", "#92b8e7"];
+    this.onecolor = ["#9e60e5", "#7f6aff", "#ff4280", "#36f9bf", "#92b8e7"];
   }
 
   _createClass(App_Fireball, [{
@@ -104,8 +110,13 @@ var App_Fireball = function () {
       cjs.Ticker.addEventListener("tick", this.stage);
       cjs.Ticker.timingMode = cjs.Ticker.RAF;
       var handleClick = function handleClick() {
-        var color = _this.colors[Math.floor(Math.random() * (_this.colors.length - 1))];
-        new Hanabi(_this.fire_container, _this.stage.mouseX, _this.stage.mouseY, color);
+        var color = _this.onecolor[Math.floor(Math.random() * (_this.onecolor.length - 1))];
+
+        if (Math.random() * 10 > 5) {
+          new Hanabi_Onecolor(_this.fire_container, _this.stage.canvas.width * Math.random(), _this.stage.canvas.height * Math.random(), color);
+        } else {
+          new Hanabi_Colourful(_this.fire_container, _this.stage.canvas.width * Math.random(), _this.stage.canvas.height * Math.random());
+        }
       };
       window.addEventListener("click", handleClick);
     }
@@ -114,24 +125,25 @@ var App_Fireball = function () {
   return App_Fireball;
 }();
 
-var Hanabi = function () {
-  function Hanabi(stage, x, y, color) {
-    _classCallCheck(this, Hanabi);
+var Hanabi_Onecolor = function () {
+  function Hanabi_Onecolor(Container, x, y, color) {
+    _classCallCheck(this, Hanabi_Onecolor);
 
-    this.stage = stage;
+    this.container = Container;
     this.fireballs = [];
-    this.steps = 300;
+    this.steps = 400;
     this.diffusion = 3;
-    this.life = 100;
+    this.life = 80;
     this.color = color;
-    this.size = 5 * Math.random();
+    this.size = 10 * Math.random();
+
     for (var i = 0; i < this.steps; i++) {
       var fireball = new cjs.Shape();
       fireball.x = x;
       fireball.y = y;
 
       fireball.graphics.beginFill(this.color).drawCircle(0, 0, this.size);
-      fireball.compositeOperation = "screen";
+      fireball.compositeOperation = "lighter";
 
       this.angle = i * (360 / this.steps);
       this.radian = this.angle * Math.PI / 180;
@@ -141,18 +153,18 @@ var Hanabi = function () {
 
       fireball.life = this.life;
       this.fireballs.push(fireball);
-      this.stage.addChild(fireball);
+      this.container.addChild(fireball);
     }
 
     this.initHandler();
   }
 
-  _createClass(Hanabi, [{
+  _createClass(Hanabi_Onecolor, [{
     key: "updateParticles",
     value: function updateParticles() {
+
       for (var i = 0; i < this.fireballs.length; i++) {
         var fireball = this.fireballs[i];
-
         fireball.vx *= 0.98;
         fireball.vy *= 0.98;
 
@@ -165,7 +177,7 @@ var Hanabi = function () {
         fireball.life -= 1;
 
         if (fireball.life <= 0) {
-          this.stage.removeChild(fireball);
+          this.container.removeChild(fireball);
           this.fireballs.splice(i, 1);
           i--;
         }
@@ -182,7 +194,81 @@ var Hanabi = function () {
     }
   }]);
 
-  return Hanabi;
+  return Hanabi_Onecolor;
+}();
+
+var Hanabi_Colourful = function () {
+  function Hanabi_Colourful(Container, x, y) {
+    _classCallCheck(this, Hanabi_Colourful);
+
+    this.container = Container;
+    this.fireballs = [];
+    this.steps = 400;
+    this.diffusion = 2;
+    this.life = 100;
+    this.size = 10 * Math.random();
+    this.colourful = ["#9e60e5", "#7f6aff", "#ff4280", "#36f9bf", "#92b8e7"];
+
+    for (var i = 0; i < this.steps; i++) {
+      var fireball = new cjs.Shape();
+      fireball.x = x;
+      fireball.y = y;
+
+      fireball.graphics.beginFill(this.colourful[Math.floor(Math.random() * (this.colourful.length - 1))]).drawCircle(0, 0, this.size);
+      fireball.compositeOperation = "lighter";
+
+      this.angle = i * (360 / this.steps);
+      this.radian = this.angle * Math.PI / 180;
+
+      fireball.vx = this.diffusion * Math.sin(this.radian) * Math.random();
+      fireball.vy = this.diffusion * Math.cos(this.radian) * Math.random();
+
+      fireball.life = this.life;
+      this.fireballs.push(fireball);
+      this.container.addChild(fireball);
+    }
+
+    this.initHandler();
+  }
+
+  _createClass(Hanabi_Colourful, [{
+    key: "updateParticles",
+    value: function updateParticles() {
+
+      for (var i = 0; i < this.fireballs.length; i++) {
+        var fireball = this.fireballs[i];
+        fireball.vy += 0.03;
+
+        fireball.vx *= 0.98;
+        fireball.vy *= 0.98;
+
+        fireball.x += fireball.vx;
+        fireball.y += fireball.vy;
+
+        var scale = fireball.life / this.life;
+        fireball.scaleX = fireball.scaleY = scale;
+        fireball.alpha = scale;
+        fireball.life -= 1;
+
+        if (fireball.life <= 0) {
+          this.container.removeChild(fireball);
+          this.fireballs.splice(i, 1);
+          i--;
+        }
+      }
+    }
+  }, {
+    key: "initHandler",
+    value: function initHandler() {
+      var _this3 = this;
+
+      cjs.Ticker.addEventListener("tick", function () {
+        _this3.updateParticles();
+      });
+    }
+  }]);
+
+  return Hanabi_Colourful;
 }();
 
 window.onload = function () {
