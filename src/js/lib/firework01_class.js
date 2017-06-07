@@ -31,7 +31,7 @@ class App_Fireball {
       }else{
         new Hanabi_Colourful(this.fire_container, this.stage.canvas.width * Math.random(), this.stage.canvas.height * Math.random());
       }
-      
+
     }
     window.addEventListener("click", handleClick);
   }
