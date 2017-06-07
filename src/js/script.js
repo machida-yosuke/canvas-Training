@@ -1,9 +1,10 @@
-import "./lib/ics-basics.js"
-import "./lib/particle.js"
-import "./lib/firework01.js"
-import "./lib/firework01_class.js"
+// import "./lib/ics-basics.js"
+// import "./lib/particle.js"
+// import "./lib/firework01.js"
+// import "./lib/firework01_class.js"
+import "./lib/firework01_pixi.js"
 
-window.addEventListener("resize", canvasResize);
+//window.addEventListener("resize", canvasResize);
 function canvasResize() {
   const ics_tutorial = document.getElementById("ics-tutorial__canvas");
   ics_tutorial.setAttribute("width", window.innerWidth);
