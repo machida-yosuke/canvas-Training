@@ -23,7 +23,6 @@ class AppFireball {
     this.fireballs = [];
     this.initHandler();
   }
-
   initHandler() {
     let ticker = PIXI.ticker.shared;
     ticker.add((time) => {
