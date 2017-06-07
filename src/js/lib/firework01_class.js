@@ -1,6 +1,8 @@
 const cjs = createjs;
+const ONECOLOR = ["#9e60e5", "#7f6aff", "#ff4280", "#36f9bf", "#92b8e7"];
+const DECELERATION = 0.98;
 
-class App_Fireball {
+class AppFireball {
   constructor(canvas_id) {
     this.stage = new cjs.Stage(canvas_id);
     this.stage.autoClear = false;
@@ -8,7 +10,6 @@ class App_Fireball {
     this.fire_container = new cjs.Container();
     this.fire_container.x = 0;
     this.fire_container.y = 0;
-
     this.background = new cjs.Shape();
     this.background.graphics
       .beginFill("#000")
@@ -17,29 +18,27 @@ class App_Fireball {
 
     this.stage.addChild(this.fire_container, this.background);
     this.initHandler();
-    this.onecolor = ["#9e60e5", "#7f6aff", "#ff4280", "#36f9bf", "#92b8e7"];
-
   }
+
   initHandler() {
     cjs.Ticker.addEventListener("tick", this.stage);
     cjs.Ticker.timingMode = cjs.Ticker.RAF;
     const handleClick = () => {
-      const color = this.onecolor[Math.floor(Math.random() * (this.onecolor.length - 1))];
-
-      if(Math.random() * 10 > 5){
-        new Hanabi_Onecolor(this.fire_container, this.stage.canvas.width * Math.random(), this.stage.canvas.height * Math.random(), color);
+      const color = ONECOLOR[Math.floor(Math.random() * (ONECOLOR.length))];
+      console.log(ONECOLOR[Math.floor(Math.random() * (ONECOLOR.length))]);
+      if(Math.random() > 0.5){
+        new HanabiOnecolor(this.fire_container, this.stage.canvas.width * Math.random(), this.stage.canvas.height * Math.random(), color);
       }else{
-        new Hanabi_Colourful(this.fire_container, this.stage.canvas.width * Math.random(), this.stage.canvas.height * Math.random());
+        new HanabiColorful(this.fire_container, this.stage.canvas.width * Math.random(), this.stage.canvas.height * Math.random());
       }
-
     }
     window.addEventListener("click", handleClick);
   }
 }
 
-class Hanabi_Onecolor {
-  constructor(Container, x, y, color) {
-    this.container = Container;
+class HanabiOnecolor {
+  constructor(container, x, y, color) {
+    this.container = container;
     this.fireballs = [];
     this.steps = 400;
     this.diffusion = 3;
@@ -101,13 +100,9 @@ class Hanabi_Onecolor {
   }
 }
 
-
-
-
-
-class Hanabi_Colourful {
-  constructor(Container, x, y) {
-    this.container = Container;
+class HanabiColorful {
+  constructor(container, x, y) {
+    this.container = container;
     this.fireballs = [];
     this.steps = 400;
     this.diffusion = 2;
@@ -121,7 +116,8 @@ class Hanabi_Colourful {
       fireball.y = y;
 
       fireball.graphics
-        .beginFill(this.colourful[Math.floor(Math.random() * (this.colourful.length - 1))])
+        .beginFill(this.colourful[Math.floor(Math.random() * (this.colourful.length))])
+
         .drawCircle(0, 0, this.size);
       fireball.compositeOperation = "lighter";
 
@@ -145,8 +141,8 @@ class Hanabi_Colourful {
       const fireball = this.fireballs[i];
       fireball.vy += 0.03;
 
-      fireball.vx *= 0.98;
-      fireball.vy *= 0.98;
+      fireball.vx *= DECELERATION;
+      fireball.vy *= DECELERATION;
 
       fireball.x += fireball.vx;
       fireball.y += fireball.vy;
@@ -174,5 +170,5 @@ class Hanabi_Colourful {
 
 
 window.onload = function () {
-  const Fire = new App_Fireball("ics-tutorial__canvas");
+  const fire = new AppFireball("ics-tutorial__canvas");
 }
