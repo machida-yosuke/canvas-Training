@@ -13,7 +13,9 @@ class AppFireball {
     this.background = new cjs.Shape();
     this.background.graphics
       .beginFill("#000")
+
       .drawRect(0, 0, this.stage.canvas.width, this.stage.canvas.width);
+
     this.background.alpha = 0.08;
 
     this.stage.addChild(this.fire_container, this.background);
@@ -36,15 +38,19 @@ class AppFireball {
   }
 }
 
+
 class HanabiOnecolor {
   constructor(container, x, y, color) {
     this.container = container;
+
     this.fireballs = [];
     this.steps = 400;
     this.diffusion = 3;
     this.life = 80;
     this.color = color;
+
     this.size = 10 * Math.random();
+
 
     for (let i = 0; i < this.steps; i++) {
       const fireball = new cjs.Shape();
@@ -55,6 +61,7 @@ class HanabiOnecolor {
         .beginFill(this.color)
         .drawCircle(0, 0, this.size);
       fireball.compositeOperation = "lighter";
+
 
       this.angle = i * (360 / this.steps);
       this.radian = this.angle * Math.PI / 180;
@@ -74,6 +81,7 @@ class HanabiOnecolor {
 
     for (var i = 0; i < this.fireballs.length; i++) {
       const fireball = this.fireballs[i];
+
       fireball.vx *= 0.98;
       fireball.vy *= 0.98;
 
@@ -141,8 +149,10 @@ class HanabiColorful {
       const fireball = this.fireballs[i];
       fireball.vy += 0.03;
 
+
       fireball.vx *= DECELERATION;
       fireball.vy *= DECELERATION;
+
 
       fireball.x += fireball.vx;
       fireball.y += fireball.vy;
