@@ -46,6 +46,10 @@ gulp.task('watchify', () => {
     return watchify(browserify(`${SRC}/js/script.js`))
         .transform(babelify)
         .bundle()
+        .on("error", function(err) {
+          console.error(err.toString());
+          this.emit('end');
+        })                                 
         .pipe(source('script.js'))
         .pipe(gulp.dest(`${DEST}/js`));
 });

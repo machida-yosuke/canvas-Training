@@ -1,66 +1,71 @@
-const cjs = createjs;
-const ONECOLOR = ["#9e60e5", "#7f6aff", "#ff4280", "#36f9bf", "#92b8e7"];
+const ONECOLOR = [0x9e60e5, 0x7f6aff, 0xff4280, 0x36f9bf, 0x92b8e7];
 const DECELERATION = 0.98;
 
 class AppFireball {
   constructor(canvas_id) {
-    this.stage = new cjs.Stage(canvas_id);
-    this.stage.autoClear = false;
-    this.fireballs = [];
-    this.fire_container = new cjs.Container();
-    this.fire_container.x = 0;
-    this.fire_container.y = 0;
-    this.background = new cjs.Shape();
-    this.background.graphics
-      .beginFill("#000")
-      .drawRect(0, 0, this.stage.canvas.width, this.stage.canvas.width);
+    this.stage = new PIXI.Container();
+    this.renderer = new PIXI.WebGLRenderer({
+      view: canvas_id,
+      clearBeforeRender: false,
+      preserveDrawingBuffer:true,
+      resolution:2,
+      antialias:true
+    });
+    this.fire_container = new PIXI.Container();
 
+    this.background = new PIXI.Graphics();
+    this.background.drawRect(0, 0, 9999, 9999);
+    this.background.beginFill(0x000000);
     this.background.alpha = 0.08;
 
     this.stage.addChild(this.fire_container, this.background);
+
+    this.fireballs = [];
     this.initHandler();
   }
 
   initHandler() {
-    cjs.Ticker.addEventListener("tick", this.stage);
-    cjs.Ticker.timingMode = cjs.Ticker.RAF;
+    let ticker = PIXI.ticker.shared;
+    ticker.add((time) => {
+      this.renderer.render(this.stage);
+    });
+
     const handleClick = () => {
       const color = ONECOLOR[Math.floor(Math.random() * (ONECOLOR.length))];
-      console.log(ONECOLOR[Math.floor(Math.random() * (ONECOLOR.length))]);
-      if(Math.random() > 0.5){
-        new HanabiOnecolor(this.fire_container, this.stage.canvas.width * Math.random(), this.stage.canvas.height * Math.random(), color);
-      }else{
-        new HanabiColorful(this.fire_container, this.stage.canvas.width * Math.random(), this.stage.canvas.height * Math.random());
+
+      if (Math.random() > 0.5) {
+        new HanabiOnecolor(this.fire_container, window.innerWidth * Math.random(), window.innerHeight * Math.random(), color);
+      } else {
+        new HanabiColorful(this.fire_container, window.innerWidth * Math.random(), window.innerHeight * Math.random());
       }
     }
     window.addEventListener("click", handleClick);
+    const pixiResize = () => {
+      const width_size = window.innerWidth;
+      const height_size = window.innerHeight;
+      this.renderer.resize(width_size,height_size);
+    }
+    window.addEventListener("resize", pixiResize);
   }
 }
 
-
 class HanabiOnecolor {
-  constructor(container, x, y, color) {
+  constructor(container, position_x, position_y, color) {
     this.container = container;
-
     this.fireballs = [];
     this.steps = 400;
     this.diffusion = 3;
     this.life = 80;
     this.color = color;
-
-    this.size = 10 * Math.random();
-
+    this.size = 5 * Math.random();
 
     for (let i = 0; i < this.steps; i++) {
-      const fireball = new cjs.Shape();
-      fireball.x = x;
-      fireball.y = y;
-
-      fireball.graphics
-        .beginFill(this.color)
-        .drawCircle(0, 0, this.size);
-      fireball.compositeOperation = "lighter";
-
+      const fireball = new PIXI.Graphics();
+      fireball.beginFill(this.color);
+      fireball.x = position_x;
+      fireball.y = position_y;
+      fireball.drawCircle(0, 0, this.size);
+      fireball.blendMode = PIXI.BLEND_MODES.ADD;
 
       this.angle = i * (360 / this.steps);
       this.radian = this.angle * Math.PI / 180;
@@ -77,15 +82,13 @@ class HanabiOnecolor {
   }
 
   updateParticles() {
-
     for (var i = 0; i < this.fireballs.length; i++) {
       const fireball = this.fireballs[i];
-
       fireball.vx *= 0.98;
       fireball.vy *= 0.98;
 
-      fireball.x += fireball.vx;
-      fireball.y += fireball.vy;
+      fireball.position.x += fireball.vx;
+      fireball.position.y += fireball.vy;
 
       const scale = fireball.life / this.life;
       fireball.scaleX = fireball.scaleY = scale;
@@ -101,32 +104,30 @@ class HanabiOnecolor {
   }
 
   initHandler() {
-    cjs.Ticker.addEventListener("tick", () => {
-      this.updateParticles()
+    let ticker = PIXI.ticker.shared;
+    ticker.add((time) => {
+      this.updateParticles();
     });
   }
 }
 
 class HanabiColorful {
-  constructor(container, x, y) {
+  constructor(container, position_x, position_y) {
     this.container = container;
     this.fireballs = [];
     this.steps = 400;
     this.diffusion = 2;
     this.life = 100;
-    this.size = 10 * Math.random();
-    this.colourful = ["#9e60e5", "#7f6aff", "#ff4280", "#36f9bf", "#92b8e7"];
+    this.size = 5 * Math.random();
+    this.colourful = [0x9e60e5, 0x7f6aff, 0xff4280, 0x36f9bf, 0x92b8e7];
 
     for (let i = 0; i < this.steps; i++) {
-      const fireball = new cjs.Shape();
-      fireball.x = x;
-      fireball.y = y;
-
-      fireball.graphics
-        .beginFill(this.colourful[Math.floor(Math.random() * (this.colourful.length))])
-
-        .drawCircle(0, 0, this.size);
-      fireball.compositeOperation = "lighter";
+      const fireball = new PIXI.Graphics();
+      fireball.beginFill(this.colourful[Math.floor(Math.random() * (this.colourful.length))]);
+      fireball.x = position_x;
+      fireball.y = position_y;
+      fireball.drawCircle(0, 0, this.size);
+      fireball.blendMode = PIXI.BLEND_MODES.ADD;
 
       this.angle = i * (360 / this.steps);
       this.radian = this.angle * Math.PI / 180;
@@ -148,13 +149,11 @@ class HanabiColorful {
       const fireball = this.fireballs[i];
       fireball.vy += 0.03;
 
-
       fireball.vx *= DECELERATION;
       fireball.vy *= DECELERATION;
 
-
-      fireball.x += fireball.vx;
-      fireball.y += fireball.vy;
+      fireball.position.x += fireball.vx;
+      fireball.position.y += fireball.vy;
 
       const scale = fireball.life / this.life;
       fireball.scaleX = fireball.scaleY = scale;
@@ -170,8 +169,9 @@ class HanabiColorful {
   }
 
   initHandler() {
-    cjs.Ticker.addEventListener("tick", () => {
-      this.updateParticles()
+    let ticker = PIXI.ticker.shared;
+    ticker.add((time) => {
+      this.updateParticles();
     });
   }
 }
@@ -179,5 +179,5 @@ class HanabiColorful {
 
 
 window.onload = function () {
-  const fire = new AppFireball("ics-tutorial__canvas");
+  const fire = new AppFireball(document.getElementById("ics-tutorial__canvas"));
 }
