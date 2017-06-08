@@ -2,10 +2,10 @@ const ONECOLOR = [0x9e60e5, 0x7f6aff, 0xff4280, 0x36f9bf, 0x92b8e7];
 const DECELERATION = 0.98;
 
 class AppFireball {
-  constructor(canvas_id) {
+  constructor(canvas) {
     this.stage = new PIXI.Container();
     this.renderer = new PIXI.WebGLRenderer({
-      view: canvas_id,
+      view: canvas,
       clearBeforeRender: false,
       preserveDrawingBuffer:true,
       resolution:2,
